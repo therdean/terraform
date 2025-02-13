@@ -4,6 +4,6 @@ variable "ami" {
 }
 
 variable "defaultRegion" {
-    description = "default region"
-    default = "us-east-1"
+  description = "default region"
+  default     = "us-east-1"
 }
