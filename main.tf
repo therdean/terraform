@@ -23,8 +23,6 @@ resource "aws_security_group" "mock-sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-# sstest
-
   egress {
     from_port   = 0
     to_port     = 0
