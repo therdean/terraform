@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
-    bucket = "tf-state-bucket-b10a8d4f0c8e62d60697e142e9e9cb1b"
-    key    = "terraform.tfstate"
-    region = "us-east-1"
+    bucket  = "tf-state-bucket-b10a8d4f0c8e62d60697e142e9e9cb1b"
+    key     = "terraform.tfstate"
+    region  = "us-east-1"
     encrypt = true
   }
 }
@@ -11,33 +11,22 @@ provider "aws" {
   region = var.defaultRegion
 }
 
-// the security group
-resource "aws_security_group" "mock-sg" {
-  name        = "mock-sg"
-  description = "Security group for the mock instance"
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+module "security_group" {
+  source              = "./modules/security-group"
+  name                = "mock-sg"
+  description         = "sg for the mock"
+  ingress_from_port   = 22
+  ingress_to_port     = 22
+  ingress_protocol    = "tcp"
+  ingress_cidr_blocks = ["0.0.0.0/0"]
 }
 
-// the ec2 instance
-resource "aws_instance" "mock-instance" {
-  ami           = var.ami
-  instance_type = "t2.micro"
-  tags = {
-    Name = "mock-instance"
-  }
-
-  security_groups = [aws_security_group.mock-sg.name]
+module "ec2" {
+  source              = "./modules/ec2"
+  ami                 = var.ami
+  instance_type       = "t2.micro"
+  instance_name       = "mock-instance"
+  security_group_name = module.security_group.sg_id
+  instance_count      = var.instance_count
+  depends_on_sg       = [module.security_group.sg_id]
 }

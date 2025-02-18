@@ -1,9 +1,11 @@
-variable "ami" {
-  description = "ami to use"
-  default     = "ami-085ad6ae776d8f09c"
+variable "defaultRegion" {
+  default = "us-east-1"
 }
 
-variable "defaultRegion" {
-  description = "default region"
-  default     = "us-east-1"
+variable "ami" {
+  default = "ami-085ad6ae776d8f09c"
+}
+
+variable "instance_count" {
+  default = 2
 }
